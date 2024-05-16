@@ -5,9 +5,9 @@ import { NextResponse } from "next/server";
 
 export const POST = async (req: Request, res: NextResponse) => {
     try {
-        const { content, description } = await req.json();
+        const dataCreated = await req.json();
         await connectDb();
-        const post = await prisma.category.create({ data: { description, content } });
+        const post = await prisma.blog.create({ data: dataCreated });
 
         return NextResponse.json({ message: "Success", post }, { status: 201 });
     } catch (err) {
@@ -20,9 +20,9 @@ export const POST = async (req: Request, res: NextResponse) => {
 export const GET = async () => {
     try {
         await connectDb();
-        const categories = await prisma.category.findMany();
+        const blogs = await prisma.blog.findMany();
 
-        return NextResponse.json({ message: "Success", categories }, { status: SUCCESS });
+        return NextResponse.json({ message: "Success", blogs }, { status: SUCCESS });
     } catch (err) {
         return NextResponse.json({ message: "Error", err }, { status: SERVER_ERROR });
     } finally {

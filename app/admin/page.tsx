@@ -1,3 +1,5 @@
+"use client"
+
 import NavigationAdmin from "../components/navigationAdmin";
 
 export default function AdminPage({ children }: Readonly<{
