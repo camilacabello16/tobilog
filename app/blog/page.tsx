@@ -1,36 +1,64 @@
+"use client";
+
 import {
     Card,
     CardContent,
-    CardDescription,
     CardFooter,
     CardHeader,
-    CardTitle,
 } from "@/components/ui/card"
+import { BLOG, CATEGORY } from "@/constains/api";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import moment from "moment";
 
 function Blog() {
+    const [listBlog, setListBlog] = useState<any[]>([]);
+    const [pageIndex, setPageIndex] = useState<number>(0);
+    const [pageSize, setPageSize] = useState<number>(9);
+    const [textFilter, setTextFilter] = useState<string>("");
+    const [categoryFilter, setCategoryFilter] = useState<string>("");
+    const [categoryList, setCategoryList] = useState<any[]>([]);
+
     const imageLink = "https://cdn.pixabay.com/photo/2023/02/14/23/59/sunset-7790627_640.jpg";
 
+    const getBlogs = () => {
+        axios.get(BLOG + `?pageSize=${pageSize}&pageIndex=${pageIndex}&text=${textFilter}&category=${categoryFilter}`).then(res => {
+            setListBlog(res.data.blogs);
+        });
+    };
+
+    const getCategories = () => {
+        axios.get(CATEGORY).then(res => {
+            setCategoryList(res.data.categories);
+        });
+    }
+
+    useEffect(() => {
+        getCategories();
+        getBlogs();
+    }, []);
+
     return (
-        <div className="flex flex-wrap justify-between">
-            {Array.from(Array(15).keys()).map((item: any) => {
+        <div className="flex flex-wrap justify-between px-20">
+            {listBlog.map((item: any) => {
                 return (
                     <Card key={item} style={{ width: '32%' }} className="mt-5">
                         <CardHeader />
                         <CardContent>
                             <div className="h-48 w-full">
-                                <img className="object-cover h-full w-full" src={imageLink} />
+                                <img className="object-cover h-full w-full" src={item.thumbnail} />
                             </div>
                             <div className="mt-5 font-extrabold">
-                                <h2>Title</h2>
+                                <h2>{item.title}</h2>
                             </div>
                             <div className="mt-5">
-                                <p className="line-clamp-2">It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy.</p>
+                                <p className="line-clamp-2">{item.description}</p>
                             </div>
                         </CardContent>
                         <CardFooter>
                             <div className="border-t-2 flex justify-between w-full pt-5 text-slate-400">
                                 <span>16 views</span>
-                                <span>3 days ago</span>
+                                <span>{moment(item.createdAt).format("YYYY/MM/DD HH:mm")}</span>
                             </div>
                         </CardFooter>
                     </Card>

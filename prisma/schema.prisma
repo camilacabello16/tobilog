@@ -20,11 +20,13 @@ model Category {
 }
 
 model Blog {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
-  title      String
-  content    String
-  createBy   String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  categoryId String   @db.ObjectId
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  content     String
+  thumbnail   String
+  description String
+  createBy    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  categoryId  String   @db.ObjectId
 }

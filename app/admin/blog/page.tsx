@@ -11,7 +11,6 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { Button } from "@/components/ui/button";
-import { Drawer } from "vaul";
 import { useEffect, useState } from "react";
 import {
     Form,
@@ -37,7 +36,6 @@ import {
     DialogDescription,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
 } from "@/components/ui/dialog";
 import {
     Select,
@@ -46,13 +44,16 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea"
 
 export default function BlogPage() {
     //form setup
     const formSchema = z.object({
-        title: z.string().nonempty('Field is required').min(2).max(50),
+        title: z.string().nonempty('Field is required').min(2).max(200),
         content: z.string().nonempty('Field is required'),
         categoryId: z.string().nonempty('Field is required'),
+        thumbnail: z.string().nonempty('Field is required'),
+        description: z.string().nonempty('Field is required'),
     });
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -60,6 +61,8 @@ export default function BlogPage() {
             content: "",
             title: "",
             categoryId: "",
+            thumbnail: "",
+            description: "",
         },
     });
 
@@ -85,7 +88,7 @@ export default function BlogPage() {
         getCategories();
     }, []);
 
-    const onSubmit = (values: z.infer<typeof formSchema>) => {
+    const onSubmit = (values: any) => {
         values.createBy = "test";
         axios.post(BLOG, values).then(res => {
             if (res.status === CREATED) {
@@ -136,8 +139,8 @@ export default function BlogPage() {
                 </TableBody>
             </Table></div>
 
-            <Dialog open={open} >
-                <DialogContent className="w-4/5">
+            <Dialog open={open} onOpenChange={setOpen}>
+                <DialogContent className="w-4/5 overflow-y-scroll" style={{ height: 500 }}>
                     <DialogHeader>
                         <DialogTitle>Blog</DialogTitle>
                         <DialogDescription>
@@ -174,6 +177,32 @@ export default function BlogPage() {
                                                         })}
                                                     </SelectContent>
                                                 </Select>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="description"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Short description</FormLabel>
+                                                <FormControl>
+                                                    <Textarea {...field} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="thumbnail"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Thumbnail</FormLabel>
+                                                <FormControl>
+                                                    <Input placeholder="Link of image" {...field} />
+                                                </FormControl>
                                                 <FormMessage />
                                             </FormItem>
                                         )}
